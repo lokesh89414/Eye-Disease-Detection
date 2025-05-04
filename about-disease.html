@@ -1,0 +1,353 @@
+<!-- about-disease.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Eye Care - About Eye Diseases</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-eye"></i>
+                <span>AI Eye Care</span>
+            </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="prediction.html">Prediction</a></li>
+                <li><a href="about-disease.html" class="active">About Diseases</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="disease-main">
+        <section class="disease-hero">
+            <h1>Understanding Eye Diseases</h1>
+            <p>Learn about common eye conditions, their symptoms, and treatments</p>
+        </section>
+
+        <section class="disease-filter">
+            <div class="search-box">
+                <input type="text" id="disease-search" placeholder="Search for a disease...">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="filter-tags">
+                <button class="tag active" data-category="all">All</button>
+                <button class="tag" data-category="common">Common</button>
+                <button class="tag" data-category="serious">Serious</button>
+                <button class="tag" data-category="age-related">Age-Related</button>
+                <button class="tag" data-category="diabetes">Diabetes-Related</button>
+            </div>
+        </section>
+
+        <section class="disease-gallery">
+            <div class="disease-card" data-categories="common,age-related">
+                <div class="disease-image">
+                    <img src="data:image/jpeg;base64,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" alt="Cataract">
+                </div>
+                <div class="disease-info">
+                    <h3>Cataracts</h3>
+                    <p class="disease-description">Clouding of the eye's natural lens, causing blurry vision and glare sensitivity.</p>
+                    <button class="learn-more">Learn More <i class="fas fa-chevron-right"></i></button>
+                    <div class="disease-details">
+                        <h4>Symptoms</h4>
+                        <ul>
+                            <li>Cloudy or blurred vision</li>
+                            <li>Difficulty seeing at night</li>
+                            <li>Sensitivity to light and glare</li>
+                            <li>Seeing "halos" around lights</li>
+                        </ul>
+                        <h4>Treatments</h4>
+                        <p>Surgery to replace the cloudy lens with an artificial one is the only effective treatment.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="disease-card" data-categories="serious">
+                <div class="disease-image">
+                    <img src="https://drdecarlo.net/wp-content/uploads/2021/11/how-to-manage-glaucoma.jpg" alt="Glaucoma">
+                </div>
+                <div class="disease-info">
+                    <h3>Glaucoma</h3>
+                    <p class="disease-description">A group of eye conditions that damage the optic nerve, often due to high eye pressure.</p>
+                    <button class="learn-more">Learn More <i class="fas fa-chevron-right"></i></button>
+                    <div class="disease-details">
+                        <h4>Symptoms</h4>
+                        <ul>
+                            <li>Patchy blind spots in peripheral or central vision</li>
+                            <li>Tunnel vision in advanced stages</li>
+                            <li>Severe headache and eye pain (acute angle-closure glaucoma)</li>
+                            <li>Nausea and vomiting</li>
+                        </ul>
+                        <h4>Treatments</h4>
+                        <p>Eye drops, oral medications, laser treatment, or surgery to lower eye pressure.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="disease-card" data-categories="serious,diabetes">
+                <div class="disease-image">
+                    <img src="https://m.economictimes.com/thumb/msid-79408901,width-1200,height-900,resizemode-4,imgsize-209587/eye-pain-pink1_istock.jpg" alt="Diabetic Retinopathy">
+                </div>
+                <div class="disease-info">
+                    <h3>Diabetic Retinopathy</h3>
+                    <p class="disease-description">Diabetes complication that affects eyes by damaging blood vessels in the retina.</p>
+                    <button class="learn-more">Learn More <i class="fas fa-chevron-right"></i></button>
+                    <div class="disease-details">
+                        <h4>Symptoms</h4>
+                        <ul>
+                            <li>Spots or dark strings floating in vision (floaters)</li>
+                            <li>Blurred vision</li>
+                            <li>Fluctuating vision</li>
+                            <li>Dark or empty areas in vision</li>
+                            <li>Vision loss</li>
+                        </ul>
+                        <h4>Treatments</h4>
+                        <p>Control of blood sugar, laser treatment, injections, or vitrectomy surgery in advanced cases.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="disease-card" data-categories="age-related">
+                <div class="disease-image">
+                    <img src="https://neurosciencenews.com/files/2024/10/amd-protein-neurosicnece-1170x585.jpg" alt="Macular Degeneration">
+                </div>
+                <div class="disease-info">
+                    <h3>Macular Degeneration</h3>
+                    <p class="disease-description">Deterioration of the central portion of the retina (macula) leading to vision loss.</p>
+                    <button class="learn-more">Learn More <i class="fas fa-chevron-right"></i></button>
+                    <div class="disease-details">
+                        <h4>Symptoms</h4>
+                        <ul>
+                            <li>Blurred or reduced central vision</li>
+                            <li>Difficulty recognizing faces</li>
+                            <li>Straight lines appearing wavy</li>
+                            <li>Dark, blurry areas in center of vision</li>
+                        </ul>
+                        <h4>Treatments</h4>
+                        <p>No cure, but progression can be slowed with vitamins, laser therapy, or injections for wet AMD.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="disease-card" data-categories="common">
+                <div class="disease-image">
+                    <img src="https://www.andersoneyecare.co.uk/wp-content/uploads/2023/12/Dry-Eye-Disease-Causes-Symptoms-and-Effective-Treatments-1024x646.png" alt="Dry Eye Syndrome">
+                </div>
+                <div class="disease-info">
+                    <h3>Dry Eye Syndrome</h3>
+                    <p class="disease-description">Inadequate tear production or poor tear quality causing eye discomfort.</p>
+                    <button class="learn-more">Learn More <i class="fas fa-chevron-right"></i></button>
+                    <div class="disease-details">
+                        <h4>Symptoms</h4>
+                        <ul>
+                            <li>Stinging, burning or scratchy sensation</li>
+                            <li>Stringy mucus in or around eyes</li>
+                            <li>Eye redness and fatigue</li>
+                            <li>Sensitivity to light</li>
+                            <li>Difficulty wearing contact lenses</li>
+                        </ul>
+                        <h4>Treatments</h4>
+                        <p>Artificial tears, prescription eye drops, punctal plugs, or lifestyle changes to reduce dryness.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="eye-anatomy">
+            <h2>Eye Anatomy & Disease Locations</h2>
+            <div class="anatomy-container">
+                <div class="eye-diagram">
+                    <img src="https://www.umkelloggeye.org/sites/default/files/styles/large/public/Schematic_diagram_of_the_human_eye.png?itok=q5vgqQDg" alt="Eye Anatomy">
+                    <div class="hotspot" style="top: 30%; left: 50%;" data-disease="cataract"></div>
+                    <div class="hotspot" style="top: 81%; left: 33%;" data-disease="glaucoma"></div>
+                    <div class="hotspot" style="top: 66%; left: 68%;" data-disease="retinopathy"></div>
+                    <div class="hotspot" style="top: 73%; left: 48%;" data-disease="macular"></div>
+                </div>
+                <div class="anatomy-info">
+                    <div class="info-card" id="cataract-info">
+                        <h3>Lens (Cataracts)</h3>
+                        <p>The lens focuses light onto the retina. Cataracts cause this normally clear lens to become cloudy.</p>
+                    </div>
+                    <div class="info-card" id="glaucoma-info" style="display: none;">
+                        <h3>Optic Nerve (Glaucoma)</h3>
+                        <p>The optic nerve carries visual information to the brain. Glaucoma damages this nerve, often due to high eye pressure.</p>
+                    </div>
+                    <div class="info-card" id="retinopathy-info" style="display: none;">
+                        <h3>Retina (Diabetic Retinopathy)</h3>
+                        <p>The retina converts light into neural signals. Diabetes can damage its blood vessels, causing retinopathy.</p>
+                    </div>
+                    <div class="info-card" id="macular-info" style="display: none;">
+                        <h3>Macula (AMD)</h3>
+                        <p>The macula provides sharp central vision. Age-related macular degeneration causes deterioration in this area.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        How often should I get my eyes checked?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Adults should have a comprehensive eye exam every 1-2 years, or more frequently if you have diabetes, a family history of eye disease, or other risk factors. Children should have their first eye exam at 6 months, again at 3 years, and before first grade.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Can eye diseases be prevented?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>While not all eye diseases can be prevented, you can reduce your risk by: wearing UV-protective sunglasses, eating a diet rich in leafy greens and fish, maintaining healthy blood pressure and sugar levels, not smoking, and giving your eyes regular breaks from digital screens.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        How accurate is AI in detecting eye diseases?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Our AI system achieves over 95% accuracy for many common eye conditions when compared to specialist diagnoses. However, it's not a substitute for a comprehensive eye exam by a qualified professional. The AI serves as a screening tool to identify potential issues that need further evaluation.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        What's the difference between an optometrist and ophthalmologist?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Optometrists (ODs) provide primary vision care including eye exams, vision correction, and diagnosis/treatment of some eye conditions. Ophthalmologists (MDs or DOs) are medical doctors who specialize in eye care, can perform surgery, and treat more complex eye diseases.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        When should I seek immediate medical attention for eye problems?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Seek immediate care for: sudden vision loss, severe eye pain, sudden onset of flashes/floaters, eye injuries, sudden double vision, or severe redness with pain/nausea. These could indicate serious conditions like retinal detachment, acute glaucoma, or other emergencies.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>AI Eye Care</h3>
+                <p>Revolutionizing eye care through artificial intelligence.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="prediction.html">Prediction</a></li>
+                    <li><a href="about-disease.html">About Diseases</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-envelope"></i> dreyedoc3@gmail.com</p>
+                <p><i class="fas fa-phone"></i> +91 7904579839</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 AI Eye Care. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Disease card expand/collapse
+        document.querySelectorAll('.learn-more').forEach(button => {
+            button.addEventListener('click', () => {
+                const card = button.closest('.disease-card');
+                const details = card.querySelector('.disease-details');
+                
+                if (details.style.display === 'block') {
+                    details.style.display = 'none';
+                    button.innerHTML = 'Learn More <i class="fas fa-chevron-right"></i>';
+                } else {
+                    details.style.display = 'block';
+                    button.innerHTML = 'Show Less <i class="fas fa-chevron-up"></i>';
+                }
+            });
+        });
+
+        // Filter diseases by category
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                // Update active tag
+                document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+                
+                const category = tag.dataset.category;
+                const diseaseCards = document.querySelectorAll('.disease-card');
+                
+                diseaseCards.forEach(card => {
+                    if (category === 'all' || card.dataset.categories.includes(category)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('disease-search');
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const diseaseCards = document.querySelectorAll('.disease-card');
+            
+            diseaseCards.forEach(card => {
+                const diseaseName = card.querySelector('h3').textContent.toLowerCase();
+                const diseaseDesc = card.querySelector('.disease-description').textContent.toLowerCase();
+                
+                if (diseaseName.includes(searchTerm) || diseaseDesc.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Eye anatomy hotspots
+        document.querySelectorAll('.hotspot').forEach(hotspot => {
+            hotspot.addEventListener('mouseover', () => {
+                const disease = hotspot.dataset.disease;
+                document.querySelectorAll('.info-card').forEach(card => {
+                    card.style.display = 'none';
+                });
+                document.getElementById(`${disease}-info`).style.display = 'block';
+            });
+        });
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const icon = question.querySelector('i');
+                
+                if (answer.style.display === 'block') {
+                    answer.style.display = 'none';
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                } else {
+                    answer.style.display = 'block';
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

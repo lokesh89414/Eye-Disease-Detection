@@ -1,0 +1,330 @@
+<!-- prediction.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Eye Care - Prediction</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-eye"></i>
+                <span>AI Eye Care</span>
+            </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="prediction.html" class="active">Prediction</a></li>
+                <li><a href="about-disease.html">About Diseases</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="prediction-main">
+        <section class="upload-section">
+            <h1>Eye Disease Detection</h1>
+            <p>Upload an image of your eye for AI-powered analysis</p>
+            
+            <div class="upload-container">
+                <div class="upload-box" id="drop-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag & drop your eye image here</p>
+                    <span>or</span>
+                    <input type="file" id="image-upload" accept="image/*">
+                    <label for="image-upload" class="browse-button">Browse Files</label>
+                </div>
+                <div class="image-preview" id="image-container"></div>
+            </div>
+        </section>
+
+        <section class="results-section" id="results-section" style="display: none;">
+            <h2>Analysis Results</h2>
+            <div class="results-container">
+                <div class="confidence-meter">
+                    <div class="meter-gauge">
+                        <div class="meter-fill" id="confidence-fill"></div>
+                    </div>
+                    <div class="confidence-value" id="confidence-value">0%</div>
+                </div>
+                <div class="diagnosis-result" id="label-container"></div>
+            </div>
+            
+            <div class="recommendations">
+                <h3>Recommendations</h3>
+                <p id="recommendation-text">Based on our analysis, we recommend you consult with an eye care professional for further evaluation.</p>
+            </div>
+            
+            <div class="action-buttons">
+                <a id="download-button" class="download-button" href="#" download="Eye_Disease_Report.txt">
+                    <i class="fas fa-download"></i> Download Report
+                </a>
+                <button class="chat-button" id="chat-button">
+                    <i class="fas fa-comment-medical"></i> Chat with AI Assistant
+                </button>
+            </div>
+        </section>
+
+        <div class="chatbot-container" id="chatbot-container" style="display: none;">
+            <div class="chatbot-header">
+                <h3>AI Eye Care Assistant</h3>
+                <button id="close-chatbot"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chatbot-messages" id="chatbot-messages"></div>
+            <div class="chatbot-input">
+                <input type="text" id="user-message" placeholder="Ask me anything about your results...">
+                <button id="send-message"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>AI Eye Care</h3>
+                <p>Revolutionizing eye care through artificial intelligence.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="prediction.html">Prediction</a></li>
+                    <li><a href="about-disease.html">About Diseases</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-envelope"></i> dreyedoc3@gmail.com</p>
+                <p><i class="fas fa-phone"></i> +91 790457989</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 AI Eye Care. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const MODEL_PATH = "./";
+        let model, labelContainer, maxPredictions;
+        let predictionsData = "";
+        let currentPrediction = null;
+
+        // Initialize the model
+        async function init() {
+            const modelURL = MODEL_PATH + "model.json";
+            const metadataURL = MODEL_PATH + "metadata.json";
+
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+
+            labelContainer = document.getElementById("label-container");
+        }
+
+        // Set up drag and drop
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('image-upload');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropArea.classList.add('highlight');
+        }
+
+        function unhighlight() {
+            dropArea.classList.remove('highlight');
+        }
+
+        dropArea.addEventListener('drop', handleDrop, false);
+        fileInput.addEventListener('change', handleFiles, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            handleFiles();
+        }
+
+        function handleFiles() {
+            const file = fileInput.files[0];
+            if (file && file.type.match('image.*')) {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const image = new Image();
+                    image.src = e.target.result;
+                    image.onload = async () => {
+                        // Show loading animation
+                        document.getElementById('results-section').style.display = 'none';
+                        dropArea.innerHTML = '<div class="loading-spinner"></div><p>Analyzing image...</p>';
+                        
+                        // Simulate processing delay for better UX
+                        setTimeout(async () => {
+                            const prediction = await model.predict(image);
+                            displayResults(image, prediction);
+                        }, 1500);
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function displayResults(image, prediction) {
+            const imageContainer = document.getElementById("image-container");
+            const resultsSection = document.getElementById("results-section");
+            const confidenceFill = document.getElementById("confidence-fill");
+            const confidenceValue = document.getElementById("confidence-value");
+            
+            // Display the uploaded image
+            imageContainer.innerHTML = "";
+            imageContainer.appendChild(image);
+            
+            // Process predictions
+            labelContainer.innerHTML = "";
+            predictionsData = "Eye Disease Classification Report:\n\n";
+            
+            // Find the highest probability prediction
+            let highestProb = 0;
+            let topPrediction = null;
+            
+            for (let i = 0; i < maxPredictions; i++) {
+                if (prediction[i].probability > highestProb) {
+                    highestProb = prediction[i].probability;
+                    topPrediction = prediction[i];
+                }
+                
+                const classPrediction =
+                    prediction[i].className + ": " + (prediction[i].probability * 100).toFixed(2) + "%";
+                const div = document.createElement("div");
+                div.className = "prediction-item";
+                div.innerHTML = `
+                    <span class="disease-name">${prediction[i].className}</span>
+                    <div class="probability-bar-container">
+                        <div class="probability-bar" style="width: ${prediction[i].probability * 100}%"></div>
+                    </div>
+                    <span class="probability-value">${(prediction[i].probability * 100).toFixed(2)}%</span>
+                `;
+                labelContainer.appendChild(div);
+                
+                predictionsData += classPrediction + "\n";
+            }
+            
+            // Update confidence meter
+            const confidencePercentage = highestProb * 100;
+            confidenceFill.style.width = `${confidencePercentage}%`;
+            confidenceValue.textContent = `${confidencePercentage.toFixed(2)}%`;
+            
+            // Set recommendation based on prediction
+            const recommendationText = document.getElementById("recommendation-text");
+            if (confidencePercentage > 70) {
+                recommendationText.innerHTML = `Our AI detected <strong>${topPrediction.className}</strong> with high confidence. We strongly recommend consulting an ophthalmologist as soon as possible.`;
+            } else if (confidencePercentage > 30) {
+                recommendationText.innerHTML = `Our AI detected possible signs of <strong>${topPrediction.className}</strong>. We recommend scheduling an eye examination for further evaluation.`;
+            } else {
+                recommendationText.textContent = "No significant issues detected. However, regular eye check-ups are recommended for maintaining good eye health.";
+            }
+            
+            // Set up download button
+            const downloadButton = document.getElementById("download-button");
+            const blob = new Blob([predictionsData], { type: "text/plain" });
+            const reportURL = URL.createObjectURL(blob);
+            downloadButton.href = reportURL;
+            
+            // Show results section
+            resultsSection.style.display = "block";
+            dropArea.innerHTML = `
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Drag & drop your eye image here</p>
+                <span>or</span>
+                <input type="file" id="image-upload" accept="image/*">
+                <label for="image-upload" class="browse-button">Browse Files</label>
+            `;
+            
+            // Reattach event listeners
+            fileInput.addEventListener('change', handleFiles, false);
+        }
+
+        // Chatbot functionality
+        const chatButton = document.getElementById('chat-button');
+        const chatbotContainer = document.getElementById('chatbot-container');
+        const closeChatbot = document.getElementById('close-chatbot');
+        const sendMessageBtn = document.getElementById('send-message');
+        const userMessageInput = document.getElementById('user-message');
+        const chatbotMessages = document.getElementById('chatbot-messages');
+
+        chatButton.addEventListener('click', () => {
+            chatbotContainer.style.display = 'block';
+            addBotMessage("Hello! I'm your AI Eye Care assistant. How can I help you understand your results better?");
+        });
+
+        closeChatbot.addEventListener('click', () => {
+            chatbotContainer.style.display = 'none';
+        });
+
+        sendMessageBtn.addEventListener('click', sendMessage);
+        userMessageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const message = userMessageInput.value.trim();
+            if (message) {
+                addUserMessage(message);
+                userMessageInput.value = '';
+                
+                // Simulate bot response
+                setTimeout(() => {
+                    const responses = [
+                        "Based on your results, I recommend consulting with an eye care professional for a comprehensive examination.",
+                        "The AI analysis provides a preliminary assessment, but a doctor's evaluation is essential for accurate diagnosis.",
+                        "Many eye conditions are treatable when detected early. Your results suggest further medical evaluation would be beneficial.",
+                        "I can explain more about the condition detected if you'd like. What specific questions do you have?",
+                        "It's great that you're being proactive about your eye health. Would you like me to help you find a specialist in your area?"
+                    ];
+                    
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    addBotMessage(randomResponse);
+                }, 1000);
+            }
+        }
+
+        function addUserMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message user-message';
+            messageElement.textContent = message;
+            chatbotMessages.appendChild(messageElement);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        function addBotMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message bot-message';
+            messageElement.textContent = message;
+            chatbotMessages.appendChild(messageElement);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        // Initialize the model when page loads
+        window.onload = init;
+    </script>
+</body>
+</html>
